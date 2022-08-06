@@ -81,7 +81,6 @@ export default {
     location(e) {
       this.city = e.target.value[0].toUpperCase() + e.target.value.slice(1);
       this.getLocation();
-      e.target.blur();
       e.target.value = "";
     },
     handleClick(value) {
@@ -106,7 +105,6 @@ export default {
       );
 
       const weater = await weaterFetch.json();
-      console.log(weater.weather[0]);
       this.weater.icon = weater.weather[0].icon;
       this.weater.temp = weater.main.temp;
       this.weater.feels_like = weater.main.feels_like;
@@ -128,8 +126,7 @@ export default {
           this.weater.imageWeater = require("@/assets/rain.png");
           break;
         default:
-          this.weater.imageWeater =
-            "https://artinblog.ru/57-holder-js-izobrazheniya-zaglushki.html";
+          this.weater.imageWeater = require("@/assets/clouds.png");
       }
     },
   },

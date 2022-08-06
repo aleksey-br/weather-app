@@ -1,6 +1,7 @@
 <template>
   <div
-    class="max-w-3/4 lg:w-full h-[300px] flex flex-col justify-between border-2 rounded-xl p-5"
+    class="max-w-3/4 lg:w-full h-[300px] flex flex-col justify-between border-2 rounded-xl p-5 bg-cover lg:bg-bottom"
+    :style="{ backgroundImage: `url(${require('@/assets/wind.png')})` }"
   >
     <div class="card-header">
       <p class="text-2xl font-medium">Wind Force</p>
