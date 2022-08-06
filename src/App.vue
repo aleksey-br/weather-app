@@ -42,7 +42,6 @@
 import AppPopup from "./components/App-popup.vue";
 import AppWeater from "./components/App-weater.vue";
 import AppWind from "./components/App-wind.vue";
-const API_key = "54f7baa692789426f3659884c7c81973";
 export default {
   components: { AppPopup, AppWeater, AppWind },
   name: "App",
@@ -89,7 +88,7 @@ export default {
     },
 
     async getLocation() {
-      const url_location = `http://api.openweathermap.org/geo/1.0/direct?q=${this.city}&appid=${API_key}`;
+      const url_location = `https://api.openweathermap.org/geo/1.0/direct?q=${this.city}&appid=${process.env.VUE_APP_KEY}`;
       const localion = await fetch(url_location);
       const data = await localion.json();
       this.gps.lat = data[0].lat;
@@ -100,16 +99,16 @@ export default {
 
     async getWeater() {
       const weaterFetch = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${this.gps.lat}&lon=${this.gps.lon}&appid=${API_key}&lang=ru&units=metric`
+        `https://api.openweathermap.org/data/2.5/weather?lat=${this.gps.lat}&lon=${this.gps.lon}&lang=ru&appid=${process.env.VUE_APP_KEY}&units=metric`
       );
 
       const weater = await weaterFetch.json();
-
+      console.log(weater.main.grnd_level);
       this.weater.icon = weater.weather[0].icon;
       this.weater.temp = weater.main.temp;
       this.weater.feels_like = weater.main.feels_like;
       this.weater.humidity = weater.main.humidity;
-      this.weater.grnd_level = weater.main.grnd_level;
+      this.weater.grnd_level = weater.main.pressure;
       this.weater.wind_speed = weater.wind.speed;
       this.weater.wind_deg = weater.wind.deg;
       this.weater.visibility = weater.visibility;
