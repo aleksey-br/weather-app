@@ -1,6 +1,7 @@
 <template>
   <div
-    class="max-w-3/4 md:w-full h-[300px] flex flex-col justify-between border-2 rounded-xl p-5"
+    class="max-w-3/4 md:w-full h-[300px] flex flex-col justify-between border-2 rounded-xl p-5 bg-no-repeat bg-center bg-cover"
+    :style="{ backgroundImage: `url(${imageWeater})` }"
   >
     <div class="card-header">
       <p class="text-2xl font-medium">Weather</p>
@@ -43,7 +44,14 @@
 
 <script>
 export default {
-  props: ["temp", "presure", "visibility", "humidity", "feels_like"],
+  props: [
+    "temp",
+    "presure",
+    "visibility",
+    "humidity",
+    "feels_like",
+    "imageWeater",
+  ],
 
   computed: {
     changeTemp() {

@@ -31,6 +31,7 @@
         :visibility="weater.visibility"
         :humidity="weater.humidity"
         :feels_like="weater.feels_like"
+        :imageWeater="weater.imageWeater"
       />
       <app-wind :wind_deg="weater.wind_deg" :wind_speed="weater.wind_speed" />
     </div>
@@ -63,6 +64,8 @@ export default {
         wind_speed: "-",
         wind_deg: "-",
         visibility: "-",
+        imageWeater: "",
+        desc: "",
       },
     };
   },
@@ -103,7 +106,7 @@ export default {
       );
 
       const weater = await weaterFetch.json();
-      console.log(weater.main.grnd_level);
+      console.log(weater.weather[0]);
       this.weater.icon = weater.weather[0].icon;
       this.weater.temp = weater.main.temp;
       this.weater.feels_like = weater.main.feels_like;
@@ -112,6 +115,22 @@ export default {
       this.weater.wind_speed = weater.wind.speed;
       this.weater.wind_deg = weater.wind.deg;
       this.weater.visibility = weater.visibility;
+      this.weater.desc = weater.weather[0].description;
+
+      switch (this.weater.desc) {
+        case "ясно":
+          this.weater.imageWeater = require("@/assets/sun.png");
+          break;
+        case "переменная облачность":
+          this.weater.imageWeater = require("@/assets/clouds.png");
+          break;
+        case "пасмурно":
+          this.weater.imageWeater = require("@/assets/rain.png");
+          break;
+        default:
+          this.weater.imageWeater =
+            "https://artinblog.ru/57-holder-js-izobrazheniya-zaglushki.html";
+      }
     },
   },
 };
