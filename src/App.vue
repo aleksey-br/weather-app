@@ -9,31 +9,38 @@
         <input
           class="max-w-96 bg-gray-50 border-2 rounded-md border-gray-200 p-2 outline-1 outline-orange-400 text-gray-800 focus:shadow-md shadow-orange-500 transition-shadow"
           type="text"
-          placeholder="city"
-          @keyup.enter="location"
-        />
+          placeholder="Город"
+          @keyup.enter="location" />
       </div>
     </div>
   </header>
   <main class="wrapper container mx-auto px-4 py-4">
     <div class="w-full mb-8 md:font-light sm:text-xl">
-      Weather from
-      <h1 class="text-4xl font-bold">
-        {{ city }}
+      Погода в городе:
+      <h1 v-if="weather" class="text-4xl font-bold">
+        {{ weather.city }}
       </h1>
+      <span v-else class="loader"></span>
     </div>
+
     <div
-      class="grid grid-cols-2 grid-rows-auto grid-flow-d gap-5 lx:justify-items-center"
-    >
-      <app-weater
-        :temp="weater.temp"
-        :presure="weater.grnd_level"
-        :visibility="weater.visibility"
-        :humidity="weater.humidity"
-        :feels_like="weater.feels_like"
-        :imageWeater="weater.imageWeater"
-      />
-      <app-wind :wind_deg="weater.wind_deg" :wind_speed="weater.wind_speed" />
+      v-if="weather"
+      class="grid grid-cols-2 grid-rows-auto grid-flow-d gap-5 lx:justify-items-center">
+      <app-weather
+        :desc="weather.desc"
+        :temp="weather.temp"
+        :presure="weather.grnd_level"
+        :visibility="weather.visibility"
+        :humidity="weather.humidity"
+        :feels_like="weather.feels_like"
+        :imageWeater="weather.image" />
+      <app-wind
+        :wind_deg="weather.wind_deg"
+        :wind_speed="weather.wind_speed"
+        :imageWind="weather.imageWind" />
+    </div>
+    <div v-else class="w-full h-16 flex justify-center items-center">
+      <span class="loader"></span>
     </div>
   </main>
   <App-popup v-if="!userName" @handle="handleClick" />
@@ -41,96 +48,68 @@
 
 <script>
 import AppPopup from "./components/App-popup.vue";
-import AppWeater from "./components/App-weater.vue";
+import AppWeather from "./components/App-weater.vue";
 import AppWind from "./components/App-wind.vue";
+import Weather from "./Api";
 export default {
-  components: { AppPopup, AppWeater, AppWind },
+  components: { AppPopup, AppWeather, AppWind },
   name: "App",
 
   data() {
     return {
       userName: null,
-      gps: {
-        lat: null,
-        lon: null,
-      },
-      city: "Moscow",
-      weater: {
-        icon: "",
-        temp: "-",
-        feels_like: "-",
-        humidity: "-",
-        grnd_level: "-",
-        wind_speed: "-",
-        wind_deg: "-",
-        visibility: "-",
-        imageWeater: "",
-        desc: "",
-      },
+
+      city: "-",
+      weather: null,
     };
   },
 
-  mounted() {
+  async mounted() {
     if (localStorage.getItem("name")) {
       this.userName = localStorage.getItem("name");
     }
-    this.getLocation();
+    this.weather = await Weather.init();
+    console.log(this.weather);
   },
 
   methods: {
-    location(e) {
+    async location(e) {
       this.city = e.target.value[0].toUpperCase() + e.target.value.slice(1);
-      this.getLocation();
+      this.weather = await Weather.init(this.city);
       e.target.value = "";
     },
     handleClick(value) {
       this.userName = value;
-
       localStorage.setItem("name", this.userName);
-    },
-
-    async getLocation() {
-      const url_location = `https://api.openweathermap.org/geo/1.0/direct?q=${this.city}&appid=${process.env.VUE_APP_KEY}`;
-      const localion = await fetch(url_location);
-      const data = await localion.json();
-      this.gps.lat = data[0].lat;
-      this.gps.lon = data[0].lon;
-
-      this.getWeater();
-    },
-
-    async getWeater() {
-      const weaterFetch = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${this.gps.lat}&lon=${this.gps.lon}&lang=ru&appid=${process.env.VUE_APP_KEY}&units=metric`
-      );
-
-      const weater = await weaterFetch.json();
-      this.weater.icon = weater.weather[0].icon;
-      this.weater.temp = weater.main.temp;
-      this.weater.feels_like = weater.main.feels_like;
-      this.weater.humidity = weater.main.humidity;
-      this.weater.grnd_level = weater.main.pressure;
-      this.weater.wind_speed = weater.wind.speed;
-      this.weater.wind_deg = weater.wind.deg;
-      this.weater.visibility = weater.visibility;
-      this.weater.desc = weater.weather[0].description;
-
-      switch (this.weater.desc) {
-        case "ясно":
-          this.weater.imageWeater = require("@/assets/sun.png");
-          break;
-        case "переменная облачность":
-          this.weater.imageWeater = require("@/assets/clouds.png");
-          break;
-        case "пасмурно":
-          this.weater.imageWeater = require("@/assets/rain.png");
-          break;
-        default:
-          this.weater.imageWeater = require("@/assets/clouds.png");
-      }
     },
   },
 };
 </script>
 
-<style></style>
+<style>
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #215ad4;
+  border-bottom-color: #ff3d00;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+.loader:first-child {
+  width: 20px;
+  height: 20px;
+  border-width: 3px;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+</style>
