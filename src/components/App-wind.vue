@@ -50,16 +50,7 @@ export default {
         "Запад",
         "Северо-западный",
       ];
-      // const directions = [
-      //   "North",
-      //   "Northeast",
-      //   "East",
-      //   "Southeast",
-      //   "South",
-      //   "Southwest",
-      //   "West",
-      //   "Northwest",
-      // ];
+
       let degrees = (this.wind_deg * 8) / 360;
       degrees = Math.round(degrees, 0);
       degrees = (degrees + 8) % 8;

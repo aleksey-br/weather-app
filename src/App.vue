@@ -47,10 +47,10 @@
 </template>
 
 <script>
-import AppPopup from "./components/App-popup.vue";
-import AppWeather from "./components/App-weater.vue";
-import AppWind from "./components/App-wind.vue";
-import Weather from "./Api";
+import AppPopup from "@/components/App-popup.vue";
+import AppWeather from "@/components/App-weater.vue";
+import AppWind from "@/components/App-wind.vue";
+import Weather from "@/Api";
 export default {
   components: { AppPopup, AppWeather, AppWind },
   name: "App",
@@ -69,7 +69,6 @@ export default {
       this.userName = localStorage.getItem("name");
     }
     this.weather = await Weather.init();
-    console.log(this.weather);
   },
 
   methods: {
